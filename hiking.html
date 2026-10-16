@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hiking Conditions</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: #1a2f1a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: Arial;
+            color: white;
+            padding: 20px;
+        }
+        .container { width: 500px; }
+        h1 { color: #7fff7f; text-align: center; margin-bottom: 30px; font-size: 32px; }
+        .search-form { display: flex; gap: 10px; margin-bottom: 30px; }
+        input { flex: 1; padding: 14px; border: none; border-radius: 10px; background: #0f3460; color: white; font-size: 16px; }
+        input::placeholder { color: #666; }
+        button { padding: 14px 20px; border: none; border-radius: 10px; background: #7fff7f; color: #1a2f1a; font-size: 16px; font-weight: bold; cursor: pointer; }
+        .card { background: #2d4a2d; border-radius: 20px; padding: 30px; margin-bottom: 20px; }
+        .location { font-size: 24px; font-weight: bold; color: #7fff7f; margin-bottom: 5px; }
+        .description { color: #aaa; margin-bottom: 20px; }
+        .verdict { font-size: 22px; font-weight: bold; margin-bottom: 20px; }
+        .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px; }
+        .stat { background: #1a2f1a; border-radius: 10px; padding: 15px; text-align: center; }
+        .stat-value { font-size: 24px; font-weight: bold; color: #7fff7f; }
+        .stat-label { font-size: 12px; color: #aaa; margin-top: 4px; }
+        .reasons { background: #1a2f1a; border-radius: 10px; padding: 15px; }
+        .reason { color: #ffd700; margin-bottom: 5px; font-size: 14px; }
+        .error { background: #e94560; border-radius: 10px; padding: 15px; text-align: center; margin-bottom: 20px; }
+        .weather-icon { width: 60px; height: 60px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🥾 Hiking Conditions</h1>
+        <form class="search-form" method="POST" action="/check">
+            <input type="text" name="location" placeholder="Enter location or trail area..." required>
+            <button type="submit">Check</button>
+        </form>
+
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+
+        {% if conditions %}
+            <div class="card">
+                <div class="location">{{ conditions.location }}, {{ conditions.country }}</div>
+                <img class="weather-icon" src="http://openweathermap.org/img/wn/{{ conditions.icon }}@2x.png">
+                <div class="description">{{ conditions.description }}</div>
+                <div class="verdict" style="color: {{ conditions.verdict_color }}">{{ conditions.verdict }}</div>
+                <div class="stats">
+                    <div class="stat">
+                        <div class="stat-value">{{ conditions.temp }}°C</div>
+                        <div class="stat-label">Temperature</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">{{ conditions.wind }} m/s</div>
+                        <div class="stat-label">Wind Speed</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">{{ conditions.humidity }}%</div>
+                        <div class="stat-label">Humidity</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">{{ conditions.visibility }} km</div>
+                        <div class="stat-label">Visibility</div>
+                    </div>
+                </div>
+                {% if conditions.reasons %}
+                    <div class="reasons">
+                        {% for reason in conditions.reasons %}
+                            <div class="reason">⚠️ {{ reason }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
